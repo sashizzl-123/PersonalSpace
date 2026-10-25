@@ -1,167 +1,124 @@
-# Personal Space
+# Personal Space 🫧
 
 *Your bubble. Your rules.*
 
-A Dalamud plugin for FINAL FANTASY XIV. Set a radius around your character: players inside it look completely normal,
-players outside it fade out (or disappear), lose their nameplates, and can optionally have their synced mods held off.
+Busy city? Crowded event? Personal Space gives you a little bubble around your character. Everyone inside it looks
+totally normal. Everyone outside it fades into the background, so you can focus on the people you're actually with.
 
-## Features
+> **Heads up:** this plugin was made with AI (Claude). The idea is free for anyone to use, copy, remix or build on.
+> No credit needed, though it's always nice!
 
-- **Fade or hide** everyone outside your bubble, with exemptions for friends, party members and your target.
-- **Hide nameplates** outside the bubble.
-- **Sync Shield**: show synced players outside the bubble as vanilla without pausing them on the sync server.
-- **Crowd performance options** to keep faded players cheap to draw.
-- **Adaptive presets** that change settings automatically based on frame rate, crowd size, synced players nearby,
-  and where you are.
+## What it can do
+
+- 👻 **Fade or hide** players outside your bubble
+- 🏷️ **Hide their nameplates** so the screen isn't a wall of names
+- 🤝 **Keep friends, party members and your target visible**, even when they're outside
+- 🛡️ **Sync Shield**: show synced players outside your bubble without their mods, without pausing them
+- ⚡ **Run smoother in crowds** with options that make faded players cheaper to draw
+- 🔄 **Presets** that switch settings for you, like "hide more when my FPS drops" or "turn off at home"
 
 ## Install
 
-1. In game, run `/xlsettings` and open **Experimental**.
-2. Under **Custom Plugin Repositories**, add the moonbright.cc repository (it also carries HealthBar):
+1. In game, type `/xlsettings` and open the **Experimental** tab.
+2. Under **Custom Plugin Repositories**, paste this link:
    ```
    https://moonbright.cc/repo/pluginmaster.json
    ```
 3. Tick **Enabled**, click **+**, then **Save and Close**.
-4. Run `/xlplugins`, search for **Personal Space**, and install it.
+4. Type `/xlplugins`, search for **Personal Space**, and click install.
+
+That's it! Type `/pspace` to open the settings.
 
 ## Commands
 
-`/bubble` works as an alias for `/pspace`.
+You can use `/bubble` anywhere you'd use `/pspace`.
 
-| Command | Does |
+| Type this | To do this |
 | --- | --- |
-| `/pspace` | Open the settings window |
-| `/pspace toggle` | Turn the bubble on or off |
-| `/pspace on` / `off` | Turn the bubble on / off |
-| `/pspace radius <2-100>` | Set the bubble radius in yalms |
-| `/pspace preset` | List presets |
-| `/pspace preset <name>` | Force a preset regardless of its conditions |
-| `/pspace preset auto` | Stop forcing; go back to automatic presets |
-| `/pspace preset on` / `off` | Enable / disable adaptive presets |
+| `/pspace` | Open the settings |
+| `/pspace toggle` | Turn your bubble on or off |
+| `/pspace on` or `/pspace off` | Turn your bubble on or off |
+| `/pspace radius 15` | Set your bubble size (2 to 100 yalms) |
+| `/pspace preset` | See your presets |
+| `/pspace preset <name>` | Use a specific preset right now |
+| `/pspace preset auto` | Go back to picking presets automatically |
+| `/pspace preset on` or `off` | Turn presets on or off |
 
 ## Sync Shield
 
-Sync Shield makes synced players outside your bubble appear vanilla, **without** using the sync server's pause (which
-the other player can see).
+If you use a sync client like Lightless or Snowcloak, Sync Shield can show synced players outside your bubble
+**without their mods**. When they step back inside, their mods come right back.
 
-### How it works
+It doesn't pause anyone on the sync server, so nobody gets a notification and nothing changes on their end. It all
+happens on your screen through Penumbra.
 
-Every Mare-family client applies a pair's mods through a Penumbra temporary collection. When a synced pair stays
-outside the bubble for 3 seconds, Personal Space assigns them an *empty* temporary collection and redraws them, so
-their mod files resolve to vanilla. When they come back in, the client's own collection is restored and they're
-redrawn again.
-
-- Only Penumbra's public IPC is used (Penumbra.Api 5.15, API v5).
-- Pairs are identified through each client's read-only `<Client>.GetHandledAddresses` IPC. Nothing else is touched.
-- Sync Shield never hides anyone by itself. Shielded pairs are faded or hidden like everyone else outside the bubble.
-
-### Supported clients
-
-| Client | Status | Notes |
-| --- | --- | --- |
-| Lightless Sync 3.3 | Works | Only re-applies Glamourer after an outside redraw, so the swap holds. If it re-assigns its collection, the swap is re-applied within a second. Checked against source. |
-| Snowcloak 4.1 | Works | Same pattern as Lightless. Its own **Crowd Priority** mode pairs well with this for VRAM limits. Checked against source. |
-| MareSempiterne 1.15 | Unverified | Ignores external redraws and re-assigns its collection on every mod apply; the swap is re-applied within a second. Checked against a decompiled binary only. Please report it if a shielded pair still shows mods. |
-
-### Limitations
-
-- **Downloads aren't paused.** Clients still download a pair's files; only applying them is replaced.
-- **Only mod files go vanilla.** Models, textures, animations and sounds are swapped out. Glamourer, Customize+,
-  Heels, Honorific and Moodles state isn't Penumbra data and stays as the client set it.
-- **Each boundary crossing costs a redraw** going out and another coming back, capped at two redraws per frame. A
-  3 second debounce and 1 yalm of hysteresis stop players on the edge from flickering.
-- **Permanent per-player Penumbra collections** take priority over the client's temporary one. The swap still works,
-  but after re-entry that pair's mods only return the next time the client applies them.
-- **Full hide uses `Model | Nameplate` (0x802)** on purpose. Snowcloak's global draw block triggers on exactly
-  `Model` and the Mare lineage's on exactly `0x800`, so this combination hides one player without stalling mod
-  application for everyone else.
-- **The Visibility plugin** uses the same flags. If both plugins act on the same player, the last one wins. Personal
-  Space only clears flags it set itself.
-
-## Performance in crowds
-
-Fully hiding players is cheap. Keeping them translucent isn't: a faded character still goes through skinning,
-materials and every shadow pass. These options, under *Outside the bubble → Performance while translucent*, cut that
-cost while keeping the fade:
-
-| Option | Effect |
+| Sync client | Works? |
 | --- | --- |
-| **Drop their shadows** (on by default) | Disables shadows for faded players and their attachments, using the same flag as the game's *Shadows → Other NPCs → Hide*. Only cleared if this plugin set it, so your global setting is left alone. |
-| **Hide mounts, minions and accessories** | The player stays translucent; the heavy extras aren't drawn. |
-| **Hide beyond** | A second radius past the bubble. Players between the two stay translucent; anyone farther isn't drawn. Has 1 yalm of hysteresis. |
-| **Translucent cap** | Only the nearest N outside players stay translucent. A 3-place margin stops players swapping positions from flickering. |
+| Lightless Sync | ✅ Yes |
+| Snowcloak | ✅ Yes |
+| MareSempiterne | 🤔 Should work, not fully tested. Please let me know if it doesn't! |
 
-The game's own settings still matter too: *Character and Object Quantity*, *Character Display Range*, and *Use
-low-detail models on distant objects*. For synced pairs, Lightless's model decimation and Snowcloak's texture
-shrinking and Crowd Priority reduce mod cost at the source.
+**Good to know:**
 
-## Adaptive presets
+- Their mods still **download** in the background. They just aren't shown until the player comes closer.
+- Only **mod files** are hidden (models, textures, animations, sounds). Glamourer, Customize+, Heels, Honorific and
+  Moodles changes still show.
+- Someone has to stay outside for **3 seconds** before their mods are hidden, so people walking along the edge
+  don't flicker.
+- If you also use the **Visibility** plugin, the two can overlap when both try to hide the same player.
 
-A preset is a set of conditions plus the settings to use while those conditions hold. Manage them on the *Presets*
-tab and edit one with the pencil button.
+## Smoother crowds
 
-- Presets are checked top to bottom a few times a second. **The first match wins.**
-- A preset with no conditions always matches, so put one at the bottom as a fallback.
-- Presets only **override** the settings they change. Everything else keeps its value from the other tabs, which
-  show a note while a preset is overriding something on them.
-- **Add examples** creates three disabled presets to start from.
+Completely hiding players is easy on your PC. Fading them is surprisingly expensive. These options help, under
+**Outside the bubble → Performance while translucent**:
 
-### Conditions
+- **Drop their shadows** (on by default): faded players don't cast shadows.
+- **Hide mounts, minions and accessories**: keep the player, skip the extras.
+- **Hide beyond**: pick a second, bigger distance. Anyone past it isn't drawn at all.
+- **Translucent cap**: only fade the closest few players and hide the rest.
 
-Every ticked condition must hold for the preset to match.
+The game's own **Character and Object Quantity** and **Character Display Range** settings help too.
 
-| Condition | Notes |
-| --- | --- |
-| Frame rate | Smoothed over ~1.5 s. Set "at least" and/or "at most"; an upper bound of 0 means no limit. |
-| Players nearby | Counted whether or not the bubble is on, so a preset that turns the bubble off still sees the crowd. |
-| Synced players nearby | Read from the sync clients' `GetHandledAddresses` IPC, polled once a second while a preset uses it. Always 0 without a sync client. |
-| Kind of place | City, Overworld, Housing district, Inside a house, Inn room, Duty, Island Sanctuary, Other. Tick several to match any of them. |
-| Zones | Exact zones; instanced copies count as the same zone. Use "Add current zone" or search. |
-| Worlds | The world you're currently on, so it follows world travel. |
-| Housing | Any ward/plot or a specific one. Combine with a district zone to pin one house. Apartments report plot 0. |
+## Presets
 
-### What a preset can change
+Presets change your settings automatically depending on what's going on. Each preset has a few **conditions** ("when
+this is true...") and **settings** ("...use these").
 
-Bubble on/off, radius, preview ring, opacity, fully hide, hide names, drop shadows, hide mounts/minions, hide beyond,
-translucent cap, Sync Shield, and the friends/party/target exemptions.
+You can base a preset on:
 
-### Timing
+- Your **frame rate**
+- How many **players** are nearby
+- How many **synced players** are nearby
+- The **kind of place** you're in: city, overworld, housing, inn, duty, Island Sanctuary...
+- Specific **zones**, **worlds** or **houses**
 
-Settings under *Timing* keep presets from flipping back and forth:
+A few tips:
 
-- **Switch after** (default 3 s): how long a preset must match before it takes over.
-- **Return after** (default 8 s): how long the active preset must stop matching before base settings return.
-- **Frame-rate margin** (default 10 fps): loosens the active preset's frame-rate limits. Without it, a preset that
-  hides the crowd would raise your frame rate and immediately switch itself off.
-- **Force**: applies one preset regardless of its conditions (same as `/pspace preset <name>`).
+- Presets are checked **top to bottom**, and the first one that matches wins.
+- A preset with no conditions always matches, so it works as a fallback at the bottom of the list.
+- A preset only changes the settings you tell it to. Everything else stays the same.
+- Click **Add examples** for three starter presets you can copy and tweak.
+- Presets wait a few seconds before switching, so they don't flip back and forth.
+- Not sure what the plugin thinks your location is? The **Right now** box on the Presets tab shows you.
 
-### Place detection
+## For developers
 
-City, Overworld, Inn room and Island Sanctuary come from the zone's TerritoryIntendedUse (0, 1, 2 and 49). Housing is
-read live from the game's housing manager, so it's exact. *Duty* is anything bound by duty that isn't one of those;
-everything else is *Other*. The *Right now* box on the Presets tab shows what's detected, so a misclassified zone is
-easy to spot, and you can always match it exactly by zone instead.
+### Building
 
-## Building from source
-
-Requires the .NET 10 SDK and an installed XIVLauncher/Dalamud. The `Dalamud.NET.Sdk` finds the dev assemblies under
-`%APPDATA%\XIVLauncher\addon\Hooks\dev`.
+You'll need the .NET 10 SDK and XIVLauncher installed.
 
 ```bash
 dotnet build PersonalSpace/PersonalSpace.csproj -c Release -p:Platform=x64
 ```
 
-To load your build as a dev plugin:
+To test your build in game, uninstall the regular version first, then add
+`PersonalSpace/bin/x64/Release/PersonalSpace.dll` under **Dev Plugin Locations** in `/xlsettings` → **Experimental**.
 
-1. If you installed from the custom repo, uninstall that copy first; the two clash.
-2. In `/xlsettings` → **Experimental**, add `PersonalSpace/bin/x64/Release/PersonalSpace.dll` under **Dev Plugin
-   Locations**.
-3. In `/xlplugins` → **Dev Tools → Installed Dev Plugins**, enable **Personal Space**.
+### Publishing
 
-## Publishing
+1. Bump `<Version>` in `PersonalSpace/PersonalSpace.csproj`. Without that, players won't be offered the update.
+2. Run `tools/publish-plugin.sh` on the web server. It builds the plugin, copies it into
+   `/var/www/moonbright.cc/personalspace/` (served at `https://moonbright.cc/personalspace/`), and runs
+   `tools/combine-repos.sh` to refresh the shared `https://moonbright.cc/repo/pluginmaster.json`.
 
-`tools/publish-plugin.sh` builds in Release, copies `PersonalSpace-<version>.zip` and `pluginmaster.json` into
-`/var/www/moonbright.cc/personalspace/` (served at `https://moonbright.cc/personalspace/`), then runs
-`tools/combine-repos.sh` to rebuild `https://moonbright.cc/repo/pluginmaster.json`, the one repository that lists every
-plugin under `/var/www/moonbright.cc/*/`. Bump `<Version>` in `PersonalSpace/PersonalSpace.csproj` first, or players
-won't be offered the update. Zips aren't committed; `repo/pluginmaster.json` is.
+Plugin zips aren't committed, but `repo/pluginmaster.json` is.
