@@ -3,6 +3,3 @@ obj/
 bin/
 *.user
 *.DotSettings.user
-
-# Written by tools/publish-plugin.sh on the server; the live copy is on moonbright.cc
-repo/

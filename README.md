@@ -113,14 +113,3 @@ dotnet build PersonalSpace/PersonalSpace.csproj -c Release -p:Platform=x64
 
 To test your build in game, uninstall the regular version first, then add
 `PersonalSpace/bin/x64/Release/PersonalSpace.dll` under **Dev Plugin Locations** in `/xlsettings` → **Experimental**.
-
-### Publishing
-
-Push to `main`. Every 5 minutes the moonbright.cc server pulls, and if any commit touched `PersonalSpace/` it runs
-`tools/publish-plugin.sh` to build and publish. The version is the first three parts of `<Version>` in
-`PersonalSpace/PersonalSpace.csproj` plus the number of such commits (e.g. `0.1.0.2`), so every code push is offered
-in game as an update. Edit `<Version>` only for a bigger jump such as `0.2.0`.
-
-`tools/publish-plugin.sh` copies the build into `/var/www/moonbright.cc/personalspace/` (served at
-`https://moonbright.cc/personalspace/`) and runs `tools/combine-repos.sh` to refresh the shared
-`https://moonbright.cc/repo/pluginmaster.json`. Nothing in `repo/` is committed.
