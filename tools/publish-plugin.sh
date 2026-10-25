@@ -11,10 +11,11 @@
 #   WEB_DIR       web root folder to publish into (default /var/www/moonbright.cc/personalspace);
 #                 create it once with: sudo install -d -o "$USER" -g www-data -m 755 /var/www/moonbright.cc/personalspace
 #   COMBINED_DIR  web root holding one folder per plugin (default: the parent of WEB_DIR)
+#   PLUGIN_VERSION  version to build as, overriding <Version> in the .csproj (the server's deploy-plugin sets it)
 #   DALAMUD_HOME  Dalamud's dev folder to build against. If unset on Linux and ~/.xlcore has none,
 #                 the latest Dalamud release is downloaded to ~/.cache/personalspace/dalamud.
 #
-# Bump <Version> in PersonalSpace/PersonalSpace.csproj first, or players won't be offered the update.
+# Run by hand, bump <Version> in PersonalSpace/PersonalSpace.csproj first, or players won't be offered the update.
 set -euo pipefail
 cd "$(dirname "$0")/.."
 
@@ -26,6 +27,9 @@ COMBINED_DIR="${COMBINED_DIR:-$(dirname "$WEB_DIR")}"
 REPO_DIR="repo"
 
 build_args=(-c Release -p:Platform=x64)
+if [[ -n "${PLUGIN_VERSION:-}" ]]; then
+    build_args+=(-p:Version="$PLUGIN_VERSION")
+fi
 if [[ "$(uname -s)" != MINGW* && "$(uname -s)" != MSYS* ]]; then
     # Building a Windows plugin on Linux: fetch Dalamud's reference assemblies if needed.
     build_args+=(-p:EnableWindowsTargeting=true)

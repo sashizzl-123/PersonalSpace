@@ -116,9 +116,11 @@ To test your build in game, uninstall the regular version first, then add
 
 ### Publishing
 
-1. Bump `<Version>` in `PersonalSpace/PersonalSpace.csproj`. Without that, players won't be offered the update.
-2. Run `tools/publish-plugin.sh` on the web server. It builds the plugin, copies it into
-   `/var/www/moonbright.cc/personalspace/` (served at `https://moonbright.cc/personalspace/`), and runs
-   `tools/combine-repos.sh` to refresh the shared `https://moonbright.cc/repo/pluginmaster.json`.
+Push to `main`. Every 5 minutes the moonbright.cc server pulls, and if any commit touched `PersonalSpace/` it runs
+`tools/publish-plugin.sh` to build and publish. The version is the first three parts of `<Version>` in
+`PersonalSpace/PersonalSpace.csproj` plus the number of such commits (e.g. `0.1.0.2`), so every code push is offered
+in game as an update. Edit `<Version>` only for a bigger jump such as `0.2.0`.
 
-Plugin zips aren't committed, but `repo/pluginmaster.json` is.
+`tools/publish-plugin.sh` copies the build into `/var/www/moonbright.cc/personalspace/` (served at
+`https://moonbright.cc/personalspace/`) and runs `tools/combine-repos.sh` to refresh the shared
+`https://moonbright.cc/repo/pluginmaster.json`. Nothing in `repo/` is committed.

@@ -4,5 +4,5 @@ bin/
 *.user
 *.DotSettings.user
 
-# Plugin zips published by tools/publish-plugin.sh (pluginmaster.json is kept)
-repo/*.zip
+# Written by tools/publish-plugin.sh on the server; the live copy is on moonbright.cc
+repo/
