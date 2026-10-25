@@ -1,7 +1,5 @@
 # Personal Space 🫧
 
-*Your bubble. Your rules.*
-
 Busy city? Crowded event? Personal Space gives you a little bubble around your character. Everyone inside it looks
 totally normal. Everyone outside it fades into the background, so you can focus on the people you're actually with.
 
@@ -56,7 +54,7 @@ happens on your screen through Penumbra.
 | --- | --- |
 | Lightless Sync | ✅ Yes |
 | Snowcloak | ✅ Yes |
-| PlayerSync | 🤔 Should work, not fully tested. Please let me know if it doesn't! |
+| PlayerSync | ✅ Yes |
 
 **Good to know:**
 
@@ -91,25 +89,3 @@ You can base a preset on:
 - How many **synced players** are nearby
 - The **kind of place** you're in: city, overworld, housing, inn, duty, Island Sanctuary...
 - Specific **zones**, **worlds** or **houses**
-
-A few tips:
-
-- Presets are checked **top to bottom**, and the first one that matches wins.
-- A preset with no conditions always matches, so it works as a fallback at the bottom of the list.
-- A preset only changes the settings you tell it to. Everything else stays the same.
-- Click **Add examples** for three starter presets you can copy and tweak.
-- Presets wait a few seconds before switching, so they don't flip back and forth.
-- Not sure what the plugin thinks your location is? The **Right now** box on the Presets tab shows you.
-
-## For developers
-
-### Building
-
-You'll need the .NET 10 SDK and XIVLauncher installed.
-
-```bash
-dotnet build PersonalSpace/PersonalSpace.csproj -c Release -p:Platform=x64
-```
-
-To test your build in game, uninstall the regular version first, then add
-`PersonalSpace/bin/x64/Release/PersonalSpace.dll` under **Dev Plugin Locations** in `/xlsettings` → **Experimental**.
