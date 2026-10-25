@@ -56,7 +56,7 @@ happens on your screen through Penumbra.
 | --- | --- |
 | Lightless Sync | ✅ Yes |
 | Snowcloak | ✅ Yes |
-| MareSempiterne | 🤔 Should work, not fully tested. Please let me know if it doesn't! |
+| PlayerSync | 🤔 Should work, not fully tested. Please let me know if it doesn't! |
 
 **Good to know:**
 

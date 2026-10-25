@@ -159,7 +159,7 @@ public class PresetEditorWindow : Window, IDisposable
         DrawRange("Players nearby", p.Players, "players", integer: true,
                   $"Other players loaded around you, inside or outside the bubble. Right now: {ctx.Players}.");
         DrawRange("Synced players nearby", p.ModdedPlayers, "synced", integer: true,
-                  $"Players a sync client (Lightless, Snowcloak, MareSempiterne…) reports as pairs: the ones whose mods you're actually loading. Needs a sync client; without one this is always 0. Right now: {ctx.ModdedPlayers}.");
+                  $"Players a sync client (Lightless, Snowcloak, PlayerSync…) reports as pairs: the ones whose mods you're actually loading. Needs a sync client; without one this is always 0. Right now: {ctx.ModdedPlayers}.");
 
         DrawPlaces(p);
         DrawZones(p, ctx);

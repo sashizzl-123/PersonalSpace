@@ -43,8 +43,8 @@ public sealed class SyncManager : IDisposable
                 "Snowcloak applies mods through a Penumbra temporary collection per pair. Shielded pairs get an empty collection "
                 + "instead, so they show as vanilla until they step back inside. Snowcloak re-assigns its collection when new "
                 + "data arrives; the swap is re-applied within a second.\n\nFiles are still downloaded in the background."),
-            new HandledAddressesAdapter("MareSempiterne", "MareSempiterne", "PlayerSync", SyncSupport.PenumbraSwap, verified: false,
-                "Closed source, checked by decompiling. MareSempiterne applies mods through a Penumbra temporary collection per "
+            new HandledAddressesAdapter("PlayerSync", "MareSempiterne", "PlayerSync", SyncSupport.PenumbraSwap, verified: false,
+                "Closed source, checked by decompiling. PlayerSync applies mods through a Penumbra temporary collection per "
                 + "pair and doesn't react to outside redraws, so shielded pairs show as vanilla until they step back inside. "
                 + "It re-assigns its collection when new data arrives; the swap is re-applied within a second."),
         ];
