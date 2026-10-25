@@ -17,9 +17,9 @@ players outside it fade out (or disappear), lose their nameplates, and can optio
 ## Install
 
 1. In game, run `/xlsettings` and open **Experimental**.
-2. Under **Custom Plugin Repositories**, add:
+2. Under **Custom Plugin Repositories**, add the moonbright.cc repository (it also carries HealthBar):
    ```
-   https://raw.githubusercontent.com/sashizzl-123/DalamudPlugins/main/repo.json
+   https://moonbright.cc/repo/pluginmaster.json
    ```
 3. Tick **Enabled**, click **+**, then **Save and Close**.
 4. Run `/xlplugins`, search for **Personal Space**, and install it.
@@ -157,3 +157,11 @@ To load your build as a dev plugin:
 2. In `/xlsettings` → **Experimental**, add `PersonalSpace/bin/x64/Release/PersonalSpace.dll` under **Dev Plugin
    Locations**.
 3. In `/xlplugins` → **Dev Tools → Installed Dev Plugins**, enable **Personal Space**.
+
+## Publishing
+
+`tools/publish-plugin.sh` builds in Release, copies `PersonalSpace-<version>.zip` and `pluginmaster.json` into
+`/var/www/moonbright.cc/personalspace/` (served at `https://moonbright.cc/personalspace/`), then runs
+`tools/combine-repos.sh` to rebuild `https://moonbright.cc/repo/pluginmaster.json`, the one repository that lists every
+plugin under `/var/www/moonbright.cc/*/`. Bump `<Version>` in `PersonalSpace/PersonalSpace.csproj` first, or players
+won't be offered the update. Zips aren't committed; `repo/pluginmaster.json` is.

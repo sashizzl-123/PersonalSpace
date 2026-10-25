@@ -3,3 +3,6 @@ obj/
 bin/
 *.user
 *.DotSettings.user
+
+# Plugin zips published by tools/publish-plugin.sh (pluginmaster.json is kept)
+repo/*.zip
