@@ -70,6 +70,7 @@ public class MainWindow : Window, IDisposable
         DrawTab("Performance", DrawPerformanceTab);
         DrawTab("Sync", DrawSyncTab);
         DrawTab("Exemptions", DrawExemptionsTab);
+        DrawTab("Alerts", DrawAlertsTab);
         DrawTab("Presets", DrawPresetsTab);
     }
 
@@ -476,6 +477,62 @@ public class MainWindow : Window, IDisposable
     {
         var at = key.IndexOf('@');
         return at > 0 && at < key.Length - 1 && key.IndexOf('@', at + 1) < 0 && key.Trim().Length == key.Length;
+    }
+
+    // ── Alerts tab ──────────────────────────────────────────────────────
+
+    private void DrawAlertsTab()
+    {
+        Ui.Section("When someone targets you");
+        Ui.Muted("Find out who's looking at you. Works even while your bubble is off; always paused in PvP.");
+
+        Checkbox("Chat message", config.TargetAlertChat, v => config.TargetAlertChat = v,
+                 "Prints their name in chat when another player targets you. Click the name for the usual player menu. The same player won't trigger another message for 30 seconds.");
+
+        Checkbox("Outline them", config.TargetAlertOutline, v => config.TargetAlertOutline = v,
+                 "Draws the game's own outline around players who have you targeted.");
+
+        using (ImRaii.Disabled(!config.TargetAlertOutline))
+        {
+            var color = config.TargetAlertColor;
+            ImGui.SetNextItemWidth(Ui.ControlWidth("Outline colour"));
+            using (var combo = ImRaii.Combo("Outline colour", color.ToString()))
+            {
+                if (combo.Success)
+                {
+                    foreach (var option in Enum.GetValues<OutlineColor>())
+                    {
+                        if (ImGui.Selectable(option.ToString(), option == color))
+                        {
+                            config.TargetAlertColor = option;
+                            config.Save();
+                        }
+                    }
+                }
+            }
+
+            var linger = config.TargetAlertLingerSeconds;
+            ImGui.SetNextItemWidth(Ui.ControlWidth("Keep outline"));
+            if (ImGui.SliderFloat("Keep outline", ref linger, 0f, Configuration.MaxTargetAlertLingerSeconds, linger <= 0f ? "Only while targeting" : "%.0f s after"))
+                config.TargetAlertLingerSeconds = MathF.Round(Math.Clamp(linger, 0f, Configuration.MaxTargetAlertLingerSeconds));
+            SaveOnRelease();
+            Ui.Tooltip("How long the outline stays after they stop targeting you, so a quick look doesn't slip past.");
+
+            Checkbox("Show them normally while outlined", config.TargetAlertShowNormally, v => config.TargetAlertShowNormally = v,
+                     "Someone outside your bubble who targets you is faded back in until their outline goes away, so you can actually see them.");
+        }
+
+        Checkbox("Ignore party members", config.TargetAlertIgnoreParty, v => config.TargetAlertIgnoreParty = v,
+                 "Party members targeting you don't trigger a message or an outline.");
+        ImGui.SameLine();
+        Checkbox("Ignore friends", config.TargetAlertIgnoreFriends, v => config.TargetAlertIgnoreFriends = v,
+                 "Players on your friend list targeting you don't trigger a message or an outline.");
+
+        Checkbox("Pause in combat", config.TargetAlertPauseInCombat, v => config.TargetAlertPauseInCombat = v,
+                 "No messages or outlines while you're in combat, where healers and other players target you all the time.");
+        ImGui.SameLine();
+        Checkbox("Pause in duties", config.TargetAlertPauseInDuties, v => config.TargetAlertPauseInDuties = v,
+                 "No messages or outlines inside dungeons, trials, raids and other instanced content.");
     }
 
     // ── Presets tab ─────────────────────────────────────────────────────

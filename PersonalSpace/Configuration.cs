@@ -13,6 +13,17 @@ public enum RingVisibility
     Never,
 }
 
+/// <summary>The game's object highlight colours. Values match FFXIVClientStructs' ObjectHighlightColor.</summary>
+public enum OutlineColor : byte
+{
+    Red = 1,
+    Green = 2,
+    Blue = 3,
+    Yellow = 4,
+    Orange = 5,
+    Magenta = 6,
+}
+
 [Serializable]
 public class Configuration : IPluginConfiguration
 {
@@ -65,6 +76,35 @@ public class Configuration : IPluginConfiguration
 
     /// <summary>Players that are never faded, stored as "Name@World".</summary>
     public List<string> AlwaysShow { get; set; } = [];
+
+    // Target alerts: someone else has you targeted.
+    public const float MaxTargetAlertLingerSeconds = 30f;
+
+    /// <summary>Print a chat line when another player targets you.</summary>
+    public bool TargetAlertChat { get; set; } = true;
+
+    /// <summary>Outline players who have you targeted.</summary>
+    public bool TargetAlertOutline { get; set; } = true;
+
+    /// <summary>How long the outline stays after they stop targeting you.</summary>
+    public float TargetAlertLingerSeconds { get; set; } = 5f;
+
+    public OutlineColor TargetAlertColor { get; set; } = OutlineColor.Yellow;
+
+    /// <summary>Players being outlined aren't faded or hidden, so the outline can be seen.</summary>
+    public bool TargetAlertShowNormally { get; set; } = true;
+
+    /// <summary>Party members targeting you don't trigger alerts.</summary>
+    public bool TargetAlertIgnoreParty { get; set; } = true;
+
+    /// <summary>Friends targeting you don't trigger alerts.</summary>
+    public bool TargetAlertIgnoreFriends { get; set; } = false;
+
+    /// <summary>No alerts while you're in combat.</summary>
+    public bool TargetAlertPauseInCombat { get; set; } = true;
+
+    /// <summary>No alerts while you're in a duty or other instanced content.</summary>
+    public bool TargetAlertPauseInDuties { get; set; } = true;
 
     // Adaptive presets
     public const float MaxPresetDelaySeconds = 60f;

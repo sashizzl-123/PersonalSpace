@@ -47,6 +47,7 @@ public sealed class Plugin : IDalamudPlugin
     private FadeController Fade { get; init; }
     private NameplateController Nameplates { get; init; }
     private RingRenderer Ring { get; init; }
+    private TargetAlertController TargetAlerts { get; init; }
 
     /// <summary>Error types already logged, so a failure that repeats every frame only logs once.</summary>
     private readonly HashSet<Type> reportedErrors = [];
@@ -73,6 +74,8 @@ public sealed class Plugin : IDalamudPlugin
         Fade = new FadeController(Settings, Tracker);
         Nameplates = new NameplateController(Settings, Tracker);
         Ring = new RingRenderer(this, Tracker);
+        TargetAlerts = new TargetAlertController(Configuration);
+        Tracker.TargetAlerts = TargetAlerts;
 
         MainWindow = new MainWindow(this);
         PresetEditor = new PresetEditorWindow(this);
@@ -112,7 +115,8 @@ public sealed class Plugin : IDalamudPlugin
         PluginInterface.UiBuilder.OpenConfigUi -= ToggleMainUi;
         PluginInterface.UiBuilder.OpenMainUi -= ToggleMainUi;
 
-        // Restore everyone we've faded or hidden before we go.
+        // Restore everyone we've faded, hidden or outlined before we go.
+        TargetAlerts.Dispose();
         Fade.Dispose();
         PenumbraShield.Dispose();
         Sync.Dispose();
@@ -132,6 +136,7 @@ public sealed class Plugin : IDalamudPlugin
         try
         {
             Presets.Update(framework);
+            TargetAlerts.Update();
             Tracker.Update();
             Sync.Update();
             PenumbraShield.Update();
@@ -143,7 +148,11 @@ public sealed class Plugin : IDalamudPlugin
             ReportError(ex, "framework update");
 
             // Something went wrong mid-frame: stand down so nobody is left faded in a bad state.
-            try { Tracker.Clear(); }
+            try
+            {
+                Tracker.Clear();
+                TargetAlerts.Clear();
+            }
             catch (Exception clearEx) { ReportError(clearEx, "reset after error"); }
         }
     }

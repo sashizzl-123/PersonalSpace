@@ -62,6 +62,9 @@ public sealed unsafe class BubbleTracker : IDisposable
         return world is null ? null : $"{name}@{world.Value.Name.ExtractText()}";
     }
 
+    /// <summary>Set once at startup. Players it's outlining can be exempted so the outline is actually visible.</summary>
+    public TargetAlertController? TargetAlerts { get; set; }
+
     /// <summary>All players seen this frame. Struct enumerator, so iterating does not allocate.</summary>
     public Dictionary<ulong, TrackedPlayer>.ValueCollection Players => players.Values;
 
@@ -234,6 +237,8 @@ public sealed unsafe class BubbleTracker : IDisposable
     {
         if (settings.ExemptTarget && (nint)chara == target)
             return true;
+        if (config.TargetAlertShowNormally && TargetAlerts?.IsOutlined(player.GameObjectId) == true)
+            return true;
         if (settings.ExemptParty && chara->IsPartyMember)
             return true;
         if (settings.ExemptFriends && chara->IsFriend)
@@ -269,6 +274,12 @@ public sealed unsafe class BubbleTracker : IDisposable
         if (!settings.Enabled)
             return config.Enabled ? $"Turned off by preset \"{settings.ActivePreset?.Name}\"" : "Turned off";
 
+        return GameSuspendReason();
+    }
+
+    /// <summary>Why the game state rules out touching other players right now, regardless of settings. Null if it doesn't.</summary>
+    public static string? GameSuspendReason()
+    {
         var condition = Plugin.Condition;
         var clientState = Plugin.ClientState;
 

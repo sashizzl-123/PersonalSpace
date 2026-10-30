@@ -11,6 +11,7 @@ totally normal. Everyone outside it fades into the background, so you can focus 
 - 👻 **Fade or hide** players outside your bubble
 - 🏷️ **Hide their nameplates** so the screen isn't a wall of names
 - 🤝 **Keep friends, party members and your target visible**, even when they're outside
+- 👀 **See who's looking at you**: a chat message and an outline when another player targets you
 - 🛡️ **Sync Shield**: show synced players outside your bubble without their mods, without pausing them
 - ⚡ **Run smoother in crowds** with options that make faded players cheaper to draw
 - 🔄 **Presets** that switch settings for you, like "hide more when my FPS drops" or "turn off at home"
